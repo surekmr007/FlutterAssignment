@@ -1,7 +1,7 @@
+import 'package:crud/database/database.dart';
 import 'package:crud/model/users.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/widgets.dart';
-import 'package:crud/database/database.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -9,59 +9,84 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
+
+  Future<void> init() async {
+    database = await openDatabase(
+      join(await getDatabasesPath(), 'Users_database.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT, age INTEGER, email TEXT)',
+        );
+      },
+      version: 1,
+    );
+  }
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
+  @override
+  void initState() {
+    super.initState();
+    widget.init();
+  }
+
   @override
   Widget build(BuildContext context) {
-
-  // Future<void> insertUsers(Users users) async {
-  //   final db = await database;
-  //   await db.insert(
-  //     'users',
-  //     users.toMap(),
-  //     conflictAlgorithm: ConflictAlgorithm.replace,
-  //   );
-  // }
-
-    
     return Center(
-        child: Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ElevatedButton(
+      child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ElevatedButton(
               onPressed: () {
                 var fido = Users(
-                  id: 0,
+                  id: 1,
                   name: 'Fido',
                   age: 35,
-                  mobile: 0712345678,
-                  email: '<EMAIL>',
+                  email: 'surekmr007@gmail.com',
                 );
                 insertUsers(fido);
-                print(users());
               },
-              child: Text('Insert')),
-          const SizedBox(
-            height: 40,
-          ),
-          ElevatedButton(onPressed: () {}, child: Text('Update')),
-          const SizedBox(
-            height: 40,
-          ),
-          ElevatedButton(onPressed: () {}, child: Text('Delete')),
-          const SizedBox(
-            height: 40,
-          ),
-          ElevatedButton(onPressed: () {}, child: Text('Read')),
-          const SizedBox(
-            height: 40,
-          ),
-        ],
+              child: Text('Insert'),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                var fido = Users(
+                  id: 1, 
+                  name: 'Fido',
+                  age: 42,
+                  email: 'ysdbyfvh@jndfh.cindf',
+                );
+                updateUsers(fido);
+              },
+              child: Text('Update'),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                deleteUsers(1);
+              },
+              child: Text('Delete'),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final users = await fetchUsers();
+                print(users);
+              },
+              child: Text('Read'),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
