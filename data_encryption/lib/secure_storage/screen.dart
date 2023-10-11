@@ -1,6 +1,7 @@
 import 'package:data_encryption/question2.dart';
 import 'package:data_encryption/secure_storage/secure_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:data_encryption/secure_storage/secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class _HomePageState extends State<LoginScreen> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final SecureStorage _secureStorage = SecureStorage();
+
 
   @override
   void initState() {
@@ -89,12 +91,39 @@ class _HomePageState extends State<LoginScreen> {
                         child: Text('Save'),
                       ),
                     ),
-                    
                   ),
                 ),
-                ElevatedButton(onPressed: (){
-                  sendSensitiveData();
-                }, child: Text('SUBMIT'))
+                const SizedBox(
+                  height: 10,
+                ),
+                ButtonBar(
+                  alignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          _secureStorage
+                              .getUserName()
+                              .then((value) => print(value));
+                        },
+                        child: const Text("get username")),
+                    ElevatedButton(
+                        onPressed: () {
+                          _secureStorage
+                              .getPassWord()
+                              .then((value) => print(value));
+                        },
+                        child: const Text('get password'))
+                  ],
+                ),
+                const Text('click submit to send data using post method'),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      sendSensitiveData();
+                    },
+                    child: const Text('SUBMIT'))
               ],
             ),
           ),

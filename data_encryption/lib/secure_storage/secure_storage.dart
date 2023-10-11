@@ -11,11 +11,8 @@ class SecureStorage {
     await storage.write(key: _keyUserName, value: username);
   }
 
-  getUserName() async {
-    return {
-      print(_keyUserName),
-      await storage.read(key: _keyUserName),
-    };
+   Future<String?>  getUserName() async {
+    return await storage.read(key: _keyUserName);
   }
 
   Future setPassWord(String password) async {
@@ -24,5 +21,9 @@ class SecureStorage {
 
   Future<String?> getPassWord() async {
     return await storage.read(key: _keyPassWord);
+  }
+
+  getUserName1() {
+    return _keyUserName;
   }
 }

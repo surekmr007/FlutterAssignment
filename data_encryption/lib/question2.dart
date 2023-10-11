@@ -21,7 +21,6 @@ void sendSensitiveData() async {
   if (response.statusCode == 201) {
     // Successfully sent sensitive data to the server
     print('Data sent successfully.');
-    print("sample");
   } else {
     // Handle errors if the request was not successful
     print('Failed to send data. Status code: ${response.statusCode}');
