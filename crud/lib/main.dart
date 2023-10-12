@@ -1,10 +1,10 @@
-import 'package:crud/screen/home_screen.dart';
+import 'package:crud/screen/floating_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:crud/screen/home_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,22 +18,15 @@ class MyApp extends StatelessWidget {
       title: "Crud Operations",
       theme: ThemeData(
         useMaterial3: true,
-
-        // Define the default brightness and colors.
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.purple,
-          // ···
           brightness: Brightness.dark,
         ),
-
-        // Define the default `TextTheme`. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
           displayLarge: const TextStyle(
             fontSize: 72,
             fontWeight: FontWeight.bold,
           ),
-          // ···
           titleLarge: GoogleFonts.oswald(
             fontSize: 30,
             fontStyle: FontStyle.italic,
@@ -47,7 +40,26 @@ class MyApp extends StatelessWidget {
           title: const Text('Crud Operations'),
         ),
         body: const HomeScreen(),
+        floatingActionButton: FloatingActionButton.small(
+          onPressed: () {
+            // Add your onPressed logic here
+            _showFloatingWidget(context);
+          },
+          child: const Icon(Icons.add), // You can use any icon you like
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation
+            .endFloat, // Positions FAB at the bottom end
       ),
     );
   }
+    void _showFloatingWidget(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const CustomDialog(); // Use a custom dialog with text fields
+      },
+    );
+  }
 }
+
+
