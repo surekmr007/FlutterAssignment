@@ -4,9 +4,9 @@ import 'package:firebaseauth/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {
-  final User user;
+  final User? user;
 
-  const ProfilePage({Key? key, required this.user}) : super(key: key);
+  const ProfilePage({Key? key, this.user}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    _currentUser = widget.user;
+    _currentUser = widget.user!;
     super.initState();
   }
 
