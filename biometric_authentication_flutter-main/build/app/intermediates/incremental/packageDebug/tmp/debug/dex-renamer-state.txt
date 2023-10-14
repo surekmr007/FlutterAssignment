@@ -1,0 +1,4 @@
+#Fri Oct 13 13:06:56 IST 2023
+base.0=D\:\\FlutterAssignment\\biometric_authentication_flutter-main\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
