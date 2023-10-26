@@ -8,6 +8,13 @@ sealed class CartState extends Equatable {
 final class CartLoading extends CartState {
   @override
   List<Object> get props => [];
+  Widget loadingShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade300,
+      child: const Text('Loading'),
+    );
+  }
 }
 
 final class CartLoaded extends CartState {

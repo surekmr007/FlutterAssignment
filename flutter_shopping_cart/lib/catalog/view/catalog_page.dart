@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shopping_cart/cart/cart.dart';
 import 'package:flutter_shopping_cart/catalog/catalog.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CatalogPage extends StatelessWidget {
   const CatalogPage({super.key});
@@ -50,7 +51,13 @@ class AddButton extends StatelessWidget {
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
         return switch (state) {
-          CartLoading() => const CircularProgressIndicator(),
+          CartLoading() => Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Container(
+                color: Colors.white,
+              ),
+            ),
           CartError() => const Text('Something went wrong!'),
           CartLoaded() => Builder(
               builder: (context) {
@@ -100,6 +107,8 @@ class CatalogListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme.titleLarge;
+    const isInCart = true; // You can change this to the actual cart state.
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: LimitedBox(
@@ -108,7 +117,17 @@ class CatalogListItem extends StatelessWidget {
           children: [
             AspectRatio(aspectRatio: 1, child: ColoredBox(color: item.color)),
             const SizedBox(width: 24),
-            Expanded(child: Text(item.name, style: textTheme)),
+            Expanded(
+              child: isInCart
+                  ? Text(item.name, style: textTheme)
+                  : Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: Container(
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
             const SizedBox(width: 24),
             AddButton(item: item),
           ],

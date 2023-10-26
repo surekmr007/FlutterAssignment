@@ -1,9 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_shopping_cart/cart/cart.dart';
 import 'package:flutter_shopping_cart/catalog/catalog.dart';
 import 'package:flutter_shopping_cart/shopping_repository.dart';
-import 'package:meta/meta.dart';
+import 'package:shimmer/shimmer.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';

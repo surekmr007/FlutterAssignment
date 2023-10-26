@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shopping_cart/cart/cart.dart';
+import 'package:flutter_shopping_cart/placeholders.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
@@ -37,10 +39,29 @@ class CartList extends StatelessWidget {
 
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
-        return switch (state) {
-          CartLoading() => const CircularProgressIndicator(),
-          CartError() => const Text('Something went wrong!'),
-          CartLoaded() => ListView.separated(
+        if (state is CartLoading) {
+          return CartLoading().loadingShimmer();
+        } else if (state is CartError) {
+          return const Text('Something went wrong!');
+        } else if (state is CartLoaded) {
+          if (state.cart.items.isEmpty) {
+            // Display shimmer when the cart is empty
+            return Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              enabled: true,
+              child: const Column(
+                children: [
+                  SizedBox(height: 16.0),
+                  ContentPlaceholder(
+                    lineType: ContentLineType.twoLines,
+                  ),
+                ],
+              ),
+            );
+          } else {
+            // Display the actual cart items
+            return ListView.separated(
               itemCount: state.cart.items.length,
               separatorBuilder: (_, __) => const SizedBox(height: 4),
               itemBuilder: (context, index) {
@@ -59,8 +80,11 @@ class CartList extends StatelessWidget {
                   ),
                 );
               },
-            ),
-        };
+            );
+          }
+        } else {
+          return const Text('Unknown state');
+        }
       },
     );
   }
