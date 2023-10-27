@@ -1,8 +1,9 @@
+import 'dart:math';
+
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shopping_cart/cart/cart.dart';
-import 'package:flutter_shopping_cart/placeholders.dart';
-import 'package:shimmer/shimmer.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
@@ -11,7 +12,7 @@ class CartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Cart')),
-      body: const ColoredBox(
+      body:  ColoredBox(
         color: Colors.yellow,
         child: Column(
           children: [
@@ -22,10 +23,54 @@ class CartPage extends StatelessWidget {
               ),
             ),
             Divider(height: 4, color: Colors.black),
-            CartTotal(),
+            Padding(
+              padding: EdgeInsets.all(32),
+              child: CartChart(),
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+
+class CartChart extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        if (state is CartLoaded) {
+          final itemPrices = state.cart.items
+              .fold<Map<String, double>>({}, (prices, item) {
+            prices[item.name] = (prices[item.name] ?? 0) + item.price;
+            return prices;
+          });
+
+          final random = Random();
+          final pieSections = itemPrices.entries.map((entry) {
+            return PieChartSectionData(
+              color: Color((random.nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0), // random color
+              value: entry.value,
+              title: '${entry.key}: ${entry.value}', // display item name and price
+              radius: 50,
+              showTitle: true,
+            );
+          }).toList();
+
+          return Container(
+            height: 200, // specify the height
+            width: double.infinity, // specify the width
+            child: PieChart(
+              PieChartData(
+                sections: pieSections,
+              ),
+            ),
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
     );
   }
 }
@@ -39,29 +84,10 @@ class CartList extends StatelessWidget {
 
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
-        if (state is CartLoading) {
-          return CartLoading().loadingShimmer();
-        } else if (state is CartError) {
-          return const Text('Something went wrong!');
-        } else if (state is CartLoaded) {
-          if (state.cart.items.isEmpty) {
-            // Display shimmer when the cart is empty
-            return Shimmer.fromColors(
-              baseColor: Colors.grey.shade300,
-              highlightColor: Colors.grey.shade100,
-              enabled: true,
-              child: const Column(
-                children: [
-                  SizedBox(height: 16.0),
-                  ContentPlaceholder(
-                    lineType: ContentLineType.twoLines,
-                  ),
-                ],
-              ),
-            );
-          } else {
-            // Display the actual cart items
-            return ListView.separated(
+        return switch (state) {
+          CartLoading() => const CircularProgressIndicator(),
+          CartError() => const Text('Something went wrong!'),
+          CartLoaded() => ListView.separated(
               itemCount: state.cart.items.length,
               separatorBuilder: (_, __) => const SizedBox(height: 4),
               itemBuilder: (context, index) {
@@ -80,53 +106,9 @@ class CartList extends StatelessWidget {
                   ),
                 );
               },
-            );
-          }
-        } else {
-          return const Text('Unknown state');
-        }
+            ),
+        };
       },
-    );
-  }
-}
-
-class CartTotal extends StatelessWidget {
-  const CartTotal({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final hugeStyle =
-        Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 48);
-
-    return SizedBox(
-      height: 200,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BlocBuilder<CartBloc, CartState>(
-              builder: (context, state) {
-                return switch (state) {
-                  CartLoading() => const CircularProgressIndicator(),
-                  CartError() => const Text('Something went wrong!'),
-                  CartLoaded() =>
-                    Text('\$${state.cart.totalPrice}', style: hugeStyle),
-                };
-              },
-            ),
-            const SizedBox(width: 24),
-            ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Buying not supported yet.')),
-                );
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-              child: const Text('BUY'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
